@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Personal Finance Manager</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* You can add page-specific styling here or keep it all in styles.css */
+    .login-container {
+      max-width: 400px;
+      margin: 3rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .login-container h2 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .login-container form {
+      display: flex;
+      flex-direction: column;
+    }
+    .login-container label {
+      margin-bottom: 0.5rem;
+    }
+    .login-container input {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+    .login-container button {
+      padding: 0.75rem;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .login-container button:hover {
+      background: #444;
+    }
+    .login-container a {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Personal Finance Manager</h1>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" />
+
+        <button type="submit">Login</button>
+      </form>
+        <a href="register.html">Don't have an account? Register here</a>
+        <!-- Under the login form, just for demonstration -->
+        <a href="dashboard.html">Go to Dashboard (temp link)</a>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2023 - Personal Finance Manager</p>
+  </footer>
+</body>
+</html>
