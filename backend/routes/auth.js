@@ -1,59 +1,66 @@
 // backend/routes/auth.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-// Register Route
+// POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1. Check if user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // 2. Hash the password
-    const salt = await bcrypt.genSalt(10);          // generate salt
-    const hashedPassword = await bcrypt.hash(password, salt); // hash the password
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. Create the user with the hashed password
+    // Create a new user document
     const newUser = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
-    // 4. Save the user
+    // Save the user to the database
     await newUser.save();
 
-    // 5. Respond
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+// POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Find the user by email
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // 2. Compare the submitted password with the hashed password
+    // Compare the provided password with the stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // 3. If password matches, user is authenticated
-    res.json({ message: 'Login successful', user });
+    // Generate a JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET || 'your_jwt_secret', // Use your JWT secret from .env
+      { expiresIn: '1h' }
+    );
+
+    res.json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
