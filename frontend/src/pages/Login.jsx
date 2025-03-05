@@ -6,25 +6,25 @@ import { useNavigate } from 'react-router-dom';
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();  // <-- Add this
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      // Make an API call to your backend
+      // Example API call
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
         password
       });
-      console.log(response.data);
+      console.log('Login response:', response.data);
 
-      // If login is successful:
-      onLoginSuccess();          // update parent state (loggedIn = true)
-      navigate('/dashboard');    // navigate to the dashboard
+      // Mark user as logged in
+      onLoginSuccess();
+      // Navigate to dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      // handle error (e.g., display an error message)
+      // show an error message, etc.
     }
   };
 
@@ -33,22 +33,24 @@ function Login({ onLoginSuccess }) {
       <h2>Login</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Email</label>
-        <input 
+        <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required 
+          required
         />
-        
+
         <label>Password</label>
-        <input 
+        <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required 
+          required
         />
-        
-        <button type="submit" style={{ marginTop: '1rem' }}>Login</button>
+
+        <button type="submit" style={{ marginTop: '1rem' }}>
+          Login
+        </button>
       </form>
     </div>
   );

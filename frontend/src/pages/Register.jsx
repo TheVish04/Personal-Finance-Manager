@@ -7,26 +7,25 @@ function Register({ onRegisterSuccess }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();  // <-- Add this
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      // Make an API call to your backend
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         name,
         email,
         password
       });
-      console.log(response.data);
+      console.log('Register response:', response.data);
 
-      // If registration is successful:
-      onRegisterSuccess();         // update parent state (loggedIn = true)
-      navigate('/dashboard');      // navigate to the dashboard
+      // Mark user as logged in
+      onRegisterSuccess();
+      // Navigate to dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Register error:', error);
-      // handle error (e.g., display an error message)
+      // handle error
     }
   };
 
@@ -35,30 +34,32 @@ function Register({ onRegisterSuccess }) {
       <h2>Register</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Name</label>
-        <input 
+        <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required 
+          required
         />
-        
+
         <label>Email</label>
-        <input 
+        <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required 
+          required
         />
-        
+
         <label>Password</label>
-        <input 
+        <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required 
+          required
         />
-        
-        <button type="submit" style={{ marginTop: '1rem' }}>Register</button>
+
+        <button type="submit" style={{ marginTop: '1rem' }}>
+          Register
+        </button>
       </form>
     </div>
   );
