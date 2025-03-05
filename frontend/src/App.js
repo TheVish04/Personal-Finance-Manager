@@ -1,18 +1,17 @@
 // frontend/src/App.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 
-// Importing the page components (make sure these files exist)
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 
 function App() {
   const [backendMessage, setBackendMessage] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Fetch a test message from the backend
     axios.get('http://localhost:5000/')
       .then((response) => {
         setBackendMessage(response.data);
@@ -22,30 +21,67 @@ function App() {
       });
   }, []);
 
+  // Use this to navigate in the logout function
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    // If you’re storing a token, remove it here:
+    // localStorage.removeItem('token');
+    // Then redirect to the home or login page
+    navigate('/');
+  };
+
   return (
-    <Router>
-      <div className="App" style={{ padding: '2rem' }}>
-        <header>
-          <h1>Personal Finance Manager</h1>
-          <p>Backend says: {backendMessage}</p>
-          <nav style={{ marginTop: '1rem' }}>
+    <div style={{ padding: '2rem' }}>
+      <h1>Personal Finance Manager</h1>
+      <p>Backend says: {backendMessage}</p>
+
+      <nav style={{ marginBottom: '1rem' }}>
+        {!loggedIn && (
+          <>
             <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
             <Link to="/register" style={{ marginRight: '1rem' }}>Register</Link>
-            <Link to="/dashboard">Dashboard</Link>
-          </nav>
-        </header>
-        <main style={{ marginTop: '2rem' }}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            {/* Default route */}
-            <Route path="/" element={<div>Welcome! Please use the navigation above to get started.</div>} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+          </>
+        )}
+        {loggedIn && (
+          <>
+            <Link to="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        )}
+      </nav>
+
+      <hr />
+
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login onLoginSuccess={() => setLoggedIn(true)} />}
+        />
+        <Route
+          path="/register"
+          element={<Register onRegisterSuccess={() => setLoggedIn(true)} />}
+        />
+        
+        {/* Protected route for the dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            loggedIn ? <Dashboard /> : <Navigate to="/login" />
+          }
+        />
+        
+        <Route path="/" element={<div>Welcome! Please choose an option above.</div>} />
+      </Routes>
+    </div>
   );
 }
 
-export default App;
+export default function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
