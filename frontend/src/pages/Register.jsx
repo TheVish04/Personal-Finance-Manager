@@ -15,17 +15,18 @@ function Register({ onRegisterSuccess }) {
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         name,
         email,
-        password
+        password,
       });
       console.log('Register response:', response.data);
-
-      // Mark user as logged in
+      // Store token in localStorage
+      localStorage.setItem('token', response.data.token);
+      // Notify parent that registration was successful
       onRegisterSuccess();
-      // Navigate to dashboard
+      // Navigate to the Dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Register error:', error);
-      // handle error
+      alert("Registration failed. Please check your details and try again.");
     }
   };
 
@@ -34,32 +35,27 @@ function Register({ onRegisterSuccess }) {
       <h2>Register</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Name</label>
-        <input
+        <input 
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
+          required 
         />
-
         <label>Email</label>
-        <input
+        <input 
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          required 
         />
-
         <label>Password</label>
-        <input
+        <input 
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          required 
         />
-
-        <button type="submit" style={{ marginTop: '1rem' }}>
-          Register
-        </button>
+        <button type="submit" style={{ marginTop: '1rem' }}>Register</button>
       </form>
     </div>
   );

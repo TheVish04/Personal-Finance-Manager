@@ -30,13 +30,20 @@ router.post('/register', async (req, res) => {
     // Save the user to the database
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // Generate a JWT token for auto-login
+    const token = jwt.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET || 'your_jwt_secret',
+      { expiresIn: '1h' }
+    );
+
+    res.status(201).json({ message: 'User registered successfully', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// POST /api/auth/login
+// POST /api/auth/login remains the same
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,7 +63,7 @@ router.post('/login', async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your_jwt_secret', // Use your JWT secret from .env
+      process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '1h' }
     );
 

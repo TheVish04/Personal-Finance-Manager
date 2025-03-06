@@ -11,20 +11,20 @@ function Login({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Example API call
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
-        password
+        password,
       });
       console.log('Login response:', response.data);
-
-      // Mark user as logged in
+      // Store token in localStorage
+      localStorage.setItem('token', response.data.token);
+      // Notify parent that login was successful
       onLoginSuccess();
-      // Navigate to dashboard
+      // Navigate to the Dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      // show an error message, etc.
+      alert("Login failed. Please check your credentials and try again.");
     }
   };
 
@@ -33,24 +33,20 @@ function Login({ onLoginSuccess }) {
       <h2>Login</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Email</label>
-        <input
+        <input 
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          required 
         />
-
         <label>Password</label>
-        <input
+        <input 
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          required 
         />
-
-        <button type="submit" style={{ marginTop: '1rem' }}>
-          Login
-        </button>
+        <button type="submit" style={{ marginTop: '1rem' }}>Login</button>
       </form>
     </div>
   );

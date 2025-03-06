@@ -1,3 +1,4 @@
+// frontend/src/components/Header.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,7 +12,7 @@ function Header({ loggedIn, handleLogout }) {
     }}>
       <h1 style={{ margin: 0 }}>Personal Finance Manager</h1>
       <nav style={{ marginTop: '0.5rem' }}>
-        {/* Home (Info page) is always visible */}
+        {/* Home (Info) always visible */}
         <Link 
           to="/info" 
           style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}
@@ -55,7 +56,7 @@ function Header({ loggedIn, handleLogout }) {
           </>
         )}
 
-        {/* About Us & Contact are always visible */}
+        {/* About Us & Contact always visible */}
         <Link 
           to="/about" 
           style={{ color: '#fff', marginLeft: '1rem', marginRight: '1rem', textDecoration: 'none' }}
