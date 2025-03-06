@@ -1,5 +1,5 @@
 // frontend/src/App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Info from './pages/Info';
@@ -10,64 +10,50 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 
 function App() {
-  // Determine if a token is in localStorage at startup
-  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('token'));
   const navigate = useNavigate();
+  
+  // Always initialize as logged out
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  // Called after successful login
+  // Clear any token on initial load to force a logged-out state
+  useEffect(() => {
+    localStorage.removeItem('token');
+  }, []);
+
+  // Callback to set login status after a successful login
   const handleLoginSuccess = () => {
     setLoggedIn(true);
   };
 
-  // Called after successful registration
+  // Callback to set login status after a successful registration
   const handleRegisterSuccess = () => {
     setLoggedIn(true);
   };
 
-  // Called when user clicks Logout
+  // Logout: clear token, update state, and redirect to the info page
   const handleLogout = () => {
-    // Remove the token from localStorage
     localStorage.removeItem('token');
-    // Update loggedIn state
     setLoggedIn(false);
-    // Redirect to Home/Info page
     navigate('/info');
   };
 
   return (
     <>
-      {/* Pass loggedIn and handleLogout to Header */}
       <Header loggedIn={loggedIn} handleLogout={handleLogout} />
-
       <div style={{ padding: '1rem' }}>
         <Routes>
-          {/* Default route goes to /info */}
+          {/* Default route directs to the landing page */}
           <Route path="/" element={<Navigate to="/info" />} />
-
-          {/* Public routes */}
           <Route path="/info" element={<Info />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Login route: pass handleLoginSuccess */}
-          <Route
-            path="/login"
-            element={<Login onLoginSuccess={handleLoginSuccess} />}
-          />
+          {/* Auth routes */}
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/register" element={<Register onRegisterSuccess={handleRegisterSuccess} />} />
 
-          {/* Register route: pass handleRegisterSuccess */}
-          <Route
-            path="/register"
-            element={<Register onRegisterSuccess={handleRegisterSuccess} />}
-          />
-
-          {/* Protected route for Dashboard */}
-          <Route
-            path="/dashboard"
-            element={
-              loggedIn ? <Dashboard /> : <Navigate to="/login" />
-            }
-          />
+          {/* Protected route: only accessible when logged in */}
+          <Route path="/dashboard" element={loggedIn ? <Dashboard /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </>
