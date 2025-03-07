@@ -3,65 +3,42 @@ const express = require('express');
 const router = express.Router();
 const Expense = require('../models/expense');
 const authMiddleware = require('../middleware/authMiddleware');
-const io = require('../index'); // import the io instance
 
-// CREATE expense
+// GET /api/expenses (protected)
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const expenses = await Expense.find({ userId: req.user.id }).sort({ date: -1 });
+    res.json(expenses);
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// POST /api/expenses (protected)
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { title, amount, date, category } = req.body;
-    const expense = new Expense({
-      user: req.user,
+    const { title, amount, category, transactionType, date } = req.body;
+    const newExpense = new Expense({
+      userId: req.user.id,
       title,
       amount,
-      date: date || Date.now(),
-      category,
+      category: category || 'Expense',
+      transactionType, // Expected to be 'credit' or 'debit'
+      date: date || new Date(),
     });
-    await expense.save();
+    await newExpense.save();
 
-    // Emit an event to all connected clients
-    io.emit('expenseCreated', expense);
-
-    res.status(201).json({ message: 'Expense created successfully', expense });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// UPDATE expense
-router.put('/:id', authMiddleware, async (req, res) => {
-  try {
-    const expense = await Expense.findOneAndUpdate(
-      { _id: req.params.id, user: req.user },
-      req.body,
-      { new: true }
-    );
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
+    // Emit Socket.io event for real-time update
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("expenseCreated", newExpense);
     }
 
-    // Emit an event
-    io.emit('expenseUpdated', expense);
-
-    res.json({ message: 'Expense updated successfully', expense });
+    res.status(201).json(newExpense);
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// DELETE expense
-router.delete('/:id', authMiddleware, async (req, res) => {
-  try {
-    const expense = await Expense.findOneAndDelete({ _id: req.params.id, user: req.user });
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
-
-    // Emit an event
-    io.emit('expenseDeleted', expense._id);
-
-    res.json({ message: 'Expense deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error adding expense:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 

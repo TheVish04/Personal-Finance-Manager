@@ -13,40 +13,41 @@ function Login({ onLoginSuccess }) {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
-        password,
+        password
       });
-      console.log('Login response:', response.data);
-      // Store token in localStorage
+      // response.data should have { token: "..." }
       localStorage.setItem('token', response.data.token);
-      // Notify parent that login was successful
-      onLoginSuccess();
-      // Navigate to the Dashboard
+
+      // Optionally notify parent or set loggedIn state
+      onLoginSuccess && onLoginSuccess();
+
+      // Navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      alert("Login failed. Please check your credentials and try again.");
+      alert('Login failed. Check credentials.');
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
+    <div>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+      <form onSubmit={handleSubmit}>
         <label>Email</label>
-        <input 
+        <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required 
+          required
         />
         <label>Password</label>
-        <input 
+        <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required 
+          required
         />
-        <button type="submit" style={{ marginTop: '1rem' }}>Login</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );

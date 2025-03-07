@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Register({ onRegisterSuccess }) {
+function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,15 +18,12 @@ function Register({ onRegisterSuccess }) {
         password,
       });
       console.log('Register response:', response.data);
-      // Store token in localStorage
-      localStorage.setItem('token', response.data.token);
-      // Notify parent that registration was successful
-      onRegisterSuccess();
-      // Navigate to the Dashboard
-      navigate('/dashboard');
+      alert('Registration successful! Please log in.');
+      // Redirect the user to the login page after registration
+      navigate('/login');
     } catch (error) {
       console.error('Register error:', error);
-      alert("Registration failed. Please check your details and try again.");
+      alert('Registration failed. Please try again.');
     }
   };
 

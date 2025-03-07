@@ -5,7 +5,6 @@ import ScrollReveal from '../components/ScrollReveal';
 function Info() {
   return (
     <div style={{ padding: '2rem', lineHeight: '1.6', fontFamily: 'Arial, sans-serif' }}>
-      
       {/* Section 1: Introduction */}
       <section style={{ marginBottom: '4rem' }}>
         <ScrollReveal>
@@ -13,8 +12,7 @@ function Info() {
             <h2>Welcome to Personal Finance Manager</h2>
             <p>
               Our Personal Finance Manager is designed to help you effortlessly track, manage, and analyze your expenses.
-              With a robust set of features, you can quickly get a clear picture of your spending habits and make informed
-              decisions to improve your financial health.
+              With a robust set of features, you can quickly get a clear picture of your spending habits and make informed decisions.
             </p>
           </div>
         </ScrollReveal>
@@ -29,9 +27,9 @@ function Info() {
             <ul>
               <li>Secure user authentication and registration.</li>
               <li>Easy expense tracking with add, edit, and delete options.</li>
-              <li>Real-time updates to keep your dashboard current.</li>
-              <li>Interactive reporting and analytics to visualize your spending.</li>
-              <li>Optional document uploads for receipts and supporting files.</li>
+              <li>Real-time updates via Socket.io.</li>
+              <li>Interactive reporting and analytics.</li>
+              <li>Document uploads for receipts.</li>
             </ul>
           </div>
         </ScrollReveal>
@@ -43,9 +41,8 @@ function Info() {
           <div>
             <h2>How It Works</h2>
             <p>
-              Our application is built on the MERN stack, integrating a robust Express backend with a dynamic React frontend.
-              Data is securely stored in a cloud-based MongoDB database, ensuring your information is safe and accessible.
-              The intuitive design and real-time functionality make it easy for you to stay on top of your finances.
+              Built on the MERN stack, our platform integrates a robust Express backend with a dynamic React frontend.
+              Data is securely stored in MongoDB Atlas, and real-time functionality keeps your dashboard up to date.
             </p>
           </div>
         </ScrollReveal>
@@ -57,9 +54,8 @@ function Info() {
           <div>
             <h2>Get Started Today</h2>
             <p>
-              Whether you're looking to manage your monthly budget or track your expenses for a specific project,
-              our Personal Finance Manager is the perfect tool for you.
-              Register or log in to start taking control of your financial future.
+              Register or log in to start taking control of your finances. Explore our dashboard to view your monthly income,
+              expenses, and detailed reports.
             </p>
           </div>
         </ScrollReveal>
@@ -71,10 +67,10 @@ function Info() {
           <div>
             <h2>Testimonials</h2>
             <p>
-              "This app revolutionized the way I handle my expenses. It's simple, intuitive, and extremely helpful." – Jane D.
+              "This app revolutionized the way I manage my expenses. It's intuitive and extremely helpful." – Jane D.
             </p>
             <p>
-              "I love the real-time updates and detailed reporting. It has truly helped me manage my finances better." – John S.
+              "The real-time updates and detailed reports have made a huge difference in my budgeting." – John S.
             </p>
           </div>
         </ScrollReveal>
@@ -86,13 +82,11 @@ function Info() {
           <div>
             <h2>Our Vision</h2>
             <p>
-              We are dedicated to empowering individuals to achieve financial stability and success.
-              Our goal is to continuously improve and enhance our platform to serve you better.
+              We aim to empower individuals to achieve financial stability and success through continuous improvement of our platform.
             </p>
           </div>
         </ScrollReveal>
       </section>
-      
     </div>
   );
 }

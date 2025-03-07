@@ -12,41 +12,23 @@ function Header({ loggedIn, handleLogout }) {
     }}>
       <h1 style={{ margin: 0 }}>Personal Finance Manager</h1>
       <nav style={{ marginTop: '0.5rem' }}>
-        {/* Home (Info) always visible */}
-        <Link 
-          to="/info" 
-          style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}
-        >
-          Home
-        </Link>
+        {/* Always visible links */}
+        <Link to="/info" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>Home</Link>
+        <Link to="/about" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>About Us</Link>
+        <Link to="/contact" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>Contact</Link>
 
-        {/* If NOT logged in, show Login & Register */}
+        {/* Logged-out state */}
         {!loggedIn && (
           <>
-            <Link 
-              to="/login" 
-              style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}
-            >
-              Login
-            </Link>
-            <Link 
-              to="/register" 
-              style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}
-            >
-              Register
-            </Link>
+            <Link to="/login" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>Login</Link>
+            <Link to="/register" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>Register</Link>
           </>
         )}
 
-        {/* If logged in, show Dashboard & Logout */}
+        {/* Logged-in state */}
         {loggedIn && (
           <>
-            <Link 
-              to="/dashboard" 
-              style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}
-            >
-              Dashboard
-            </Link>
+            <Link to="/dashboard" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>Dashboard</Link>
             <button 
               onClick={handleLogout} 
               style={{ background: 'none', border: '1px solid #fff', color: '#fff', cursor: 'pointer' }}
@@ -55,20 +37,6 @@ function Header({ loggedIn, handleLogout }) {
             </button>
           </>
         )}
-
-        {/* About Us & Contact always visible */}
-        <Link 
-          to="/about" 
-          style={{ color: '#fff', marginLeft: '1rem', marginRight: '1rem', textDecoration: 'none' }}
-        >
-          About Us
-        </Link>
-        <Link 
-          to="/contact" 
-          style={{ color: '#fff', textDecoration: 'none' }}
-        >
-          Contact
-        </Link>
       </nav>
     </header>
   );

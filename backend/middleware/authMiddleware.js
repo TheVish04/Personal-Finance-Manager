@@ -2,30 +2,18 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-  // Get the token from the Authorization header
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.header('Authorization');
   if (!authHeader) {
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
-
-  // Expect the header to be in the format: "Bearer <token>"
-  const token = authHeader.startsWith('Bearer ')
-    ? authHeader.split(' ')[1]
-    : authHeader;
-
-  if (!token) {
-    return res.status(401).json({ message: 'No token, authorization denied' });
-  }
-
+  const token = authHeader.replace("Bearer ", "");
   try {
-    // Verify the token using your JWT secret from .env
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_key');
-    // Attach the decoded user ID to the request object
-    req.user = decoded.userId;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // decoded should contain { id: user._id }
     next();
   } catch (err) {
-    console.error('Token verification failed:', err);
-    return res.status(401).json({ message: 'Token is not valid' });
+    console.error("JWT verification failed:", err);
+    return res.status(401).json({ message: 'Invalid token' });
   }
 };
 
