@@ -9,9 +9,12 @@ const expenseSchema = new mongoose.Schema({
   transactionType: {
     type: String,
     required: true,
-    enum: ['credit', 'debit']
+    enum: ['credit', 'debit'],
   },
   date: { type: Date, default: Date.now },
+  receiptPath: { type: String }, // To store the uploaded file path
+}, {
+  timestamps: true  // createdAt and updatedAt
 });
 
 module.exports = mongoose.model('Expense', expenseSchema);

@@ -10,39 +10,80 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import AddMoney from './pages/AddMoney';
 import AddExpense from './pages/AddExpense';
+// Import any other pages you have, e.g., UploadReceipt, etc.
 
 function App() {
   const navigate = useNavigate();
-  // Initialize loggedIn state based on token presence in localStorage
+
+  // 1. On mount, check if there's a token in localStorage.
+  // If yes, we set loggedIn to true; if not, false.
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('token'));
 
-  // Callback after successful login
-  const handleLoginSuccess = () => setLoggedIn(true);
+  // Called after a successful login in Login.jsx
+  const handleLoginSuccess = () => {
+    setLoggedIn(true);
+  };
 
-  // Callback after successful registration (Option B: redirect to login)
-  const handleRegisterSuccess = () => setLoggedIn(true);
+  // Called after a successful registration in Register.jsx
+  // (But remember, in Option B, we do NOT auto-login after register)
+  const handleRegisterSuccess = () => {
+    // Optionally do something, or navigate to /login
+  };
 
-  // Logout: clear token, update state, and redirect to Info page
+  // Called when the user clicks "Logout" in the header
   const handleLogout = () => {
+    // Remove token from localStorage
     localStorage.removeItem('token');
+    // Set loggedIn to false
     setLoggedIn(false);
+    // Navigate user to info page (or wherever you want)
     navigate('/info');
   };
 
   return (
     <>
+      {/* The header receives the loggedIn state and a logout handler */}
       <Header loggedIn={loggedIn} handleLogout={handleLogout} />
+
       <div style={{ padding: '1rem' }}>
         <Routes>
+          {/* Default route goes to /info */}
           <Route path="/" element={<Navigate to="/info" />} />
+
+          {/* Public routes */}
           <Route path="/info" element={<Info />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/register" element={<Register onRegisterSuccess={handleRegisterSuccess} />} />
-          <Route path="/dashboard" element={loggedIn ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route path="/add-money" element={loggedIn ? <AddMoney /> : <Navigate to="/login" />} />
-          <Route path="/add-expense" element={loggedIn ? <AddExpense /> : <Navigate to="/login" />} />
+
+          {/* Login & Register routes */}
+          <Route
+            path="/login"
+            element={<Login onLoginSuccess={handleLoginSuccess} />}
+          />
+          <Route
+            path="/register"
+            element={<Register onRegisterSuccess={handleRegisterSuccess} />}
+          />
+
+          {/* Protected routes (require loggedIn = true) */}
+          <Route
+            path="/dashboard"
+            element={loggedIn ? <Dashboard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/add-money"
+            element={loggedIn ? <AddMoney /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/add-expense"
+            element={loggedIn ? <AddExpense /> : <Navigate to="/login" />}
+          />
+
+          {/* Add any additional protected routes here, e.g., UploadReceipt */}
+          {/* <Route
+            path="/upload-receipt/:id"
+            element={loggedIn ? <UploadReceipt /> : <Navigate to="/login" />}
+          /> */}
         </Routes>
       </div>
     </>

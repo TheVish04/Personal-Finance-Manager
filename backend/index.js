@@ -16,26 +16,28 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// Serve uploads folder
+app.use('/uploads', express.static('uploads'));
+
 // Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.error("MongoDB Connection Error:", err));
 
 // Mount Routes
-const authRoutes = require('./routes/auth');
-const expenseRoutes = require('./routes/expenses');
+const authRoutes = require("./routes/auth");
+const expenseRoutes = require("./routes/expenses");
+app.use("/api/auth", authRoutes);
+app.use("/api/expenses", expenseRoutes);
 
-app.use('/api/auth', authRoutes);
-app.use('/api/expenses', expenseRoutes);
+// Make io accessible to routes
+app.set("io", io);
 
 // Socket.io Connection
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
   socket.on("disconnect", () => console.log("Client disconnected:", socket.id));
 });
-
-// Make io accessible to routes if needed
-app.set("io", io);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
