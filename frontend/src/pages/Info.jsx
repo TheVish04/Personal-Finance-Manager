@@ -1,22 +1,25 @@
 // frontend/src/pages/Info.jsx
 import React from 'react';
 import ScrollReveal from '../components/ScrollReveal';
+import AnimatedComponent from '../components/AnimatedComponent';
+
 
 function Info() {
   return (
     <div style={{ padding: '2rem', lineHeight: '1.6', fontFamily: 'Arial, sans-serif' }}>
-      {/* Section 1: Introduction */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>Welcome to Personal Finance Manager</h2>
-            <p>
-              Our Personal Finance Manager is designed to help you effortlessly track, manage, and analyze your expenses.
-              With a robust set of features, you can quickly get a clear picture of your spending habits and make informed decisions.
-            </p>
-          </div>
-        </ScrollReveal>
-      </section>
+      <AnimatedComponent>
+        <section style={{ marginBottom: '4rem' }}>
+          <ScrollReveal>
+            <div>
+              <h2>Welcome to Personal Finance Manager</h2>
+              <p>
+                Our Personal Finance Manager is designed to help you effortlessly track, manage, and analyze your expenses.
+                With a robust set of features, you can quickly get a clear picture of your spending habits and make informed decisions.
+              </p>
+            </div>
+          </ScrollReveal>
+        </section>
+      </AnimatedComponent>
       
       {/* Section 2: Features */}
       <section style={{ marginBottom: '4rem' }}>

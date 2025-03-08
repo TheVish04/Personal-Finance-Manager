@@ -1,49 +1,63 @@
-// frontend/src/components/Header.jsx
+// filepath: /Users/vishal/Documents/personal-finance-manager/frontend/src/components/Header.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
+
+const HeaderContainer = styled(motion.header)`
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.white};
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const NavLink = styled(Link)`
+  margin: 0 1rem;
+  color: ${({ theme }) => theme.colors.white};
+  text-decoration: none;
+`;
+
+const LogoutButton = styled.button`
+  margin: 0 1rem;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+`;
 
 function Header({ loggedIn, handleLogout }) {
   return (
-    <header style={{ backgroundColor: '#333', color: '#fff', padding: '1rem', textAlign: 'center' }}>
-      <h1 style={{ margin: 0 }}>Personal Finance Manager</h1>
-      <nav style={{ marginTop: '0.5rem' }}>
-        <Link to="/info" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-          Home
-        </Link>
-        <Link to="/about" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-          About Us
-        </Link>
-        <Link to="/contact" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-          Contact
-        </Link>
-        {!loggedIn && (
+    <HeaderContainer
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+        Personal Finance Manager
+      </div>
+      <nav>
+        <NavLink to="/info">Home</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
+        {!loggedIn ? (
           <>
-            <Link to="/login" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-              Login
-            </Link>
-            <Link to="/register" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-              Register
-            </Link>
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/register">Register</NavLink>
           </>
-        )}
-        {loggedIn && (
+        ) : (
           <>
-            <Link to="/dashboard" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-              Dashboard
-            </Link>
-            <Link to="/budget" style={{ color: '#fff', marginRight: '1rem', textDecoration: 'none' }}>
-              Budget Settings
-            </Link>
-            <button
-              onClick={handleLogout}
-              style={{ background: 'none', border: '1px solid #fff', color: '#fff', cursor: 'pointer' }}
-            >
-              Logout
-            </button>
+            <NavLink to="/dashboard">Dashboard</NavLink>
+            <NavLink to="/budget">Budget Settings</NavLink>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           </>
         )}
       </nav>
-    </header>
+    </HeaderContainer>
   );
 }
 

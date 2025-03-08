@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
+import { motion } from "framer-motion";
 import ExpenseIncomeChart from "../components/ExpenseIncomeChart";
 
 Chart.register(ArcElement, Tooltip, Legend);
@@ -66,11 +67,16 @@ function Dashboard() {
     };
   }, []);
 
-  // Process transactions for the Expense & Income Graph (grouped by date)
   const processChartData = (transactions) => {
     const grouped = {};
     transactions.forEach(({ transactionType, amount, date }) => {
-      const formattedDate = new Date(date).toLocaleDateString();
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = (d.getMonth() + 1).toString().padStart(2, "0");
+      const day = d.getDate().toString().padStart(2, "0");
+      const hour = d.getHours().toString().padStart(2, "0");
+      // Group by hour interval, e.g., "2025-03-07 14:00"
+      const formattedDate = `${year}-${month}-${day} ${hour}:00`;
       if (!grouped[formattedDate]) {
         grouped[formattedDate] = { date: formattedDate, income: 0, expense: 0 };
       }
@@ -83,7 +89,6 @@ function Dashboard() {
     return Object.values(grouped).sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
-  // Helper: Process transactions by title for pie charts
   const processPieDataByTitle = (txs) => {
     const dataMap = {};
     txs.forEach(({ title, amount }) => {
@@ -111,7 +116,6 @@ function Dashboard() {
     };
   };
 
-  // Separate income and expense transactions
   const creditTransactions = transactions.filter(
     (tx) => tx.transactionType === "credit"
   );
@@ -129,11 +133,9 @@ function Dashboard() {
   );
   const remainingBalance = totalCredit - totalDebit;
 
-  // Build pie chart data for income and expense, grouping by title
   const incomePieData = processPieDataByTitle(creditTransactions);
   const expensePieData = processPieDataByTitle(debitTransactions);
 
-  // Enhanced pie chart options with legend & tooltip details
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -147,19 +149,14 @@ function Dashboard() {
           padding: 10,
           generateLabels: (chart) => {
             const dataset = chart.data.datasets[0];
-            const total = dataset.data.reduce(
-              (acc, value) => acc + Number(value),
-              0
-            );
+            const total = dataset.data.reduce((acc, value) => acc + Number(value), 0);
             return chart.data.labels.map((label, i) => {
               const value = dataset.data[i];
               const percentage = total ? ((value / total) * 100).toFixed(1) + "%" : "0%";
               return {
                 text: `${label}: ₹${value} (${percentage})`,
                 fillStyle: dataset.backgroundColor[i],
-                hidden:
-                  isNaN(dataset.data[i]) ||
-                  chart.getDatasetMeta(0).data[i].hidden,
+                hidden: isNaN(dataset.data[i]) || chart.getDatasetMeta(0).data[i].hidden,
                 index: i,
               };
             });
@@ -170,10 +167,7 @@ function Dashboard() {
         callbacks: {
           label: (context) => {
             const value = context.parsed;
-            const total = context.dataset.data.reduce(
-              (acc, val) => acc + Number(val),
-              0
-            );
+            const total = context.dataset.data.reduce((acc, val) => acc + Number(val), 0);
             const percentage = total ? ((value / total) * 100).toFixed(1) + "%" : "0%";
             return `${context.label}: ₹${value} (${percentage})`;
           },
@@ -182,10 +176,8 @@ function Dashboard() {
     },
   };
 
-  // Delete expense
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this expense?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
@@ -200,12 +192,10 @@ function Dashboard() {
     }
   };
 
-  // Open edit modal
   const handleEdit = (expense) => {
     setEditExpense(expense);
   };
 
-  // Update expense (from edit modal)
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -234,14 +224,14 @@ function Dashboard() {
       alert("No transactions to export.");
       return;
     }
-    const headers = ["Type", "Title", "Amount", "Category", "Date", "","Updated On"];
+    const headers = ["Type", "Title", "Amount", "Category", "Date", "Updated On"];
     const rows = transactions.map((tx) => [
       tx.transactionType,
       tx.title,
       tx.amount,
       tx.category || "",
       new Date(tx.date).toLocaleString(),
-      tx.updatedAt ? new Date(tx.updatedAt).toLocaleString() : "",
+      tx.updatedAt ? new Date(tx.updatedAt).toLocaleString() : ""
     ]);
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += headers.join(",") + "\n";
@@ -258,18 +248,18 @@ function Dashboard() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <motion.div
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{ padding: "2rem" }}
+    >
       <h1>Dashboard</h1>
       <div style={{ marginBottom: "2rem" }}>
-        <p>
-          Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span>
-        </p>
-        <p>
-          Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span>
-        </p>
-        <p>
-          Remaining Balance: <strong>₹{remainingBalance}</strong>
-        </p>
+        <p>Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span></p>
+        <p>Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span></p>
+        <p>Remaining Balance: <strong>₹{remainingBalance}</strong></p>
       </div>
 
       {/* Expense & Income Graph */}
@@ -385,9 +375,7 @@ function Dashboard() {
               ))
             ) : (
               <tr>
-                <td colSpan="7" style={{ textAlign: "center", padding: "8px" }}>
-                  No transactions found.
-                </td>
+                <td colSpan="7" style={{ textAlign: "center", padding: "8px" }}>No transactions found.</td>
               </tr>
             )}
           </tbody>
@@ -396,24 +384,9 @@ function Dashboard() {
 
       {/* Navigation Buttons */}
       <div style={{ marginTop: "2rem" }}>
-        <a
-          href="/add-money"
-          style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}
-        >
-          Add Money
-        </a>
-        <a
-          href="/add-expense"
-          style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}
-        >
-          Add Expense
-        </a>
-        <a
-          href="/budget"
-          style={{ textDecoration: "none", color: "#333" }}
-        >
-          Budget Settings
-        </a>
+        <a href="/add-money" style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}>Add Money</a>
+        <a href="/add-expense" style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}>Add Expense</a>
+        <a href="/budget" style={{ textDecoration: "none", color: "#333" }}>Budget Settings</a>
       </div>
 
       <div style={{ marginTop: "1rem" }}>
@@ -449,17 +422,13 @@ function Dashboard() {
             <input
               type="text"
               value={editExpense.title}
-              onChange={(e) =>
-                setEditExpense({ ...editExpense, title: e.target.value })
-              }
+              onChange={(e) => setEditExpense({ ...editExpense, title: e.target.value })} 
             />
             <label>Amount</label>
             <input
               type="number"
               value={editExpense.amount}
-              onChange={(e) =>
-                setEditExpense({ ...editExpense, amount: e.target.value })
-              }
+              onChange={(e) => setEditExpense({ ...editExpense, amount: e.target.value })} 
             />
             <div style={{ marginTop: "1rem" }}>
               <button onClick={handleUpdate}>Save</button>
@@ -468,7 +437,7 @@ function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
