@@ -27,8 +27,10 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Mount Routes
 const authRoutes = require("./routes/auth");
 const expenseRoutes = require("./routes/expenses");
+const userRoutes = require("./routes/user");
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/user", userRoutes); 
 
 // Make io accessible to routes
 app.set("io", io);

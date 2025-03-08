@@ -135,10 +135,16 @@ function Dashboard() {
 
   // Enhanced pie chart options with legend & tooltip details
   const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "right",
         labels: {
+          font: { size: 12 },
+          boxWidth: 20,
+          boxHeight: 20,
+          padding: 10,
           generateLabels: (chart) => {
             const dataset = chart.data.datasets[0];
             const total = dataset.data.reduce(
@@ -151,7 +157,9 @@ function Dashboard() {
               return {
                 text: `${label}: ₹${value} (${percentage})`,
                 fillStyle: dataset.backgroundColor[i],
-                hidden: isNaN(dataset.data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                hidden:
+                  isNaN(dataset.data[i]) ||
+                  chart.getDatasetMeta(0).data[i].hidden,
                 index: i,
               };
             });
@@ -220,13 +228,48 @@ function Dashboard() {
     }
   };
 
+  // CSV Export Functionality
+  const exportToCSV = () => {
+    if (transactions.length === 0) {
+      alert("No transactions to export.");
+      return;
+    }
+    const headers = ["Type", "Title", "Amount", "Category", "Date", "","Updated On"];
+    const rows = transactions.map((tx) => [
+      tx.transactionType,
+      tx.title,
+      tx.amount,
+      tx.category || "",
+      new Date(tx.date).toLocaleString(),
+      tx.updatedAt ? new Date(tx.updatedAt).toLocaleString() : "",
+    ]);
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += headers.join(",") + "\n";
+    rows.forEach((row) => {
+      csvContent += row.join(",") + "\n";
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "transactions.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Dashboard</h1>
       <div style={{ marginBottom: "2rem" }}>
-        <p>Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span></p>
-        <p>Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span></p>
-        <p>Remaining Balance: <strong>₹{remainingBalance}</strong></p>
+        <p>
+          Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span>
+        </p>
+        <p>
+          Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span>
+        </p>
+        <p>
+          Remaining Balance: <strong>₹{remainingBalance}</strong>
+        </p>
       </div>
 
       {/* Expense & Income Graph */}
@@ -240,46 +283,56 @@ function Dashboard() {
       </div>
 
       {/* Two Pie Charts: Income and Expense Breakdown by Title */}
-<div style={{ display: "flex", justifyContent: "space-around", marginBottom: "2rem" }}>
-  {/* Income Pie Chart */}
-  <div style={{ width: "450px", height: "400px", border: "1px solid #ccc", padding: "1rem" }}>
-    <h3>Income Breakdown (by Source)</h3>
-    {creditTransactions.length > 0 ? (
-      <div style={{ width: "100%", height: "100%" }}>
-        <Pie
-          data={incomePieData}
-          options={{
-            ...pieOptions,
-            responsive: true,
-            maintainAspectRatio: false, // allow chart to fill container
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          marginBottom: "2rem",
+        }}
+      >
+        {/* Income Pie Chart */}
+        <div
+          style={{
+            width: "450px",
+            height: "400px",
+            border: "1px solid #ccc",
+            padding: "1rem",
           }}
-        />
-      </div>
-    ) : (
-      <p>No income data available.</p>
-    )}
-  </div>
+        >
+          <h3>Income Breakdown (by Source)</h3>
+          {creditTransactions.length > 0 ? (
+            <div style={{ width: "100%", height: "100%" }}>
+              <Pie data={incomePieData} options={pieOptions} />
+            </div>
+          ) : (
+            <p>No income data available.</p>
+          )}
+        </div>
 
-  {/* Expense Pie Chart */}
-  <div style={{ width: "450px", height: "400px", border: "1px solid #ccc", padding: "1rem" }}>
-    <h3>Expense Breakdown (by Title)</h3>
-    {debitTransactions.length > 0 ? (
-      <div style={{ width: "100%", height: "100%" }}>
-        <Pie
-          data={expensePieData}
-          options={{
-            ...pieOptions,
-            responsive: true,
-            maintainAspectRatio: false, // allow chart to fill container
+        {/* Expense Pie Chart */}
+        <div
+          style={{
+            width: "450px",
+            height: "400px",
+            border: "1px solid #ccc",
+            padding: "1rem",
           }}
-        />
+        >
+          <h3>Expense Breakdown (by Title)</h3>
+          {debitTransactions.length > 0 ? (
+            <div style={{ width: "100%", height: "100%" }}>
+              <Pie data={expensePieData} options={pieOptions} />
+            </div>
+          ) : (
+            <p>No expense data available.</p>
+          )}
+        </div>
       </div>
-    ) : (
-      <p>No expense data available.</p>
-    )}
-  </div>
-</div>
 
+      {/* Export CSV Button */}
+      <div style={{ marginBottom: "2rem" }}>
+        <button onClick={exportToCSV}>Export CSV</button>
+      </div>
 
       {/* Transactions Table */}
       <div>
@@ -302,7 +355,8 @@ function Dashboard() {
                 <tr
                   key={tx._id}
                   style={{
-                    backgroundColor: tx.transactionType === "debit" ? "#ffe6e6" : "#e6ffe6",
+                    backgroundColor:
+                      tx.transactionType === "debit" ? "#ffe6e6" : "#e6ffe6",
                   }}
                 >
                   <td style={{ border: "1px solid #ccc", padding: "8px" }}>
@@ -340,6 +394,7 @@ function Dashboard() {
         </table>
       </div>
 
+      {/* Navigation Buttons */}
       <div style={{ marginTop: "2rem" }}>
         <a
           href="/add-money"
@@ -349,9 +404,15 @@ function Dashboard() {
         </a>
         <a
           href="/add-expense"
-          style={{ textDecoration: "none", color: "#333" }}
+          style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}
         >
           Add Expense
+        </a>
+        <a
+          href="/budget"
+          style={{ textDecoration: "none", color: "#333" }}
+        >
+          Budget Settings
         </a>
       </div>
 
