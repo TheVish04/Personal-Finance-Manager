@@ -10,7 +10,7 @@ function Register({ onRegisterSuccess }) {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   const handleSubmit = async (e) => {
