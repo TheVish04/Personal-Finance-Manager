@@ -18,7 +18,7 @@ function Dashboard() {
   const fetchTransactions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/expenses", {
+      const res = await axios.get("process.env.REACT_APP_API_URL/api/expenses", {
         headers: { Authorization: `Bearer ${token}` },
         params: { timestamp: new Date().getTime() },
       });
@@ -36,7 +36,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io("process.env.REACT_APP_API_URL");
     const socket = socketRef.current;
 
     socket.on("expenseCreated", (newTransaction) => {
@@ -180,7 +180,7 @@ function Dashboard() {
     if (!window.confirm("Are you sure you want to delete this expense?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
+      await axios.delete(`process.env.REACT_APP_API_URL/api/expenses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const updated = transactions.filter((tx) => tx._id !== id);
@@ -200,7 +200,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:5000/api/expenses/${editExpense._id}`,
+        `process.env.REACT_APP_API_URL/api/expenses/${editExpense._id}`,
         editExpense,
         {
           headers: { Authorization: `Bearer ${token}` },

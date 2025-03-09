@@ -19,7 +19,7 @@ function AddMoney() {
       const now = new Date().toISOString();
 
       const response = await axios.post(
-        'http://localhost:5000/api/expenses',
+        'process.env.REACT_APP_API_URL/api/expenses',
         {
           amount,
           title: source,
