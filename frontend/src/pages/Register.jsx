@@ -8,19 +8,31 @@ function Register({ onRegisterSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      alert('Password must be at least 8 chars long, include an uppercase letter and a digit.');
+      return;
+    }
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         name,
         email,
         password,
       });
       alert('Registration successful! Please log in.');
-      // If you want to auto-login, you'd store the token here,
-      // but in Option B we do not do that. Instead we:
-      // onRegisterSuccess(); // or navigate('/login');
       navigate('/login');
     } catch (error) {
       console.error('Register error:', error);
@@ -31,10 +43,7 @@ function Register({ onRegisterSuccess }) {
   return (
     <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
       <h2>Register</h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column' }}
-      >
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Name</label>
         <input
           type="text"
