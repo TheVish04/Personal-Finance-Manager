@@ -1,96 +1,147 @@
 // frontend/src/pages/Info.jsx
 import React from 'react';
-import ScrollReveal from '../components/ScrollReveal';
-import AnimatedComponent from '../components/AnimatedComponent';
-
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 function Info() {
   return (
-    <div style={{ padding: '2rem', lineHeight: '1.6', fontFamily: 'Arial, sans-serif' }}>
-      <AnimatedComponent>
-        <section style={{ marginBottom: '4rem' }}>
-          <ScrollReveal>
-            <div>
-              <h2>Welcome to Personal Finance Manager</h2>
-              <p>
-                Our Personal Finance Manager is designed to help you effortlessly track, manage, and analyze your expenses.
-                With a robust set of features, you can quickly get a clear picture of your spending habits and make informed decisions.
-              </p>
-            </div>
-          </ScrollReveal>
-        </section>
-      </AnimatedComponent>
-      
-      {/* Section 2: Features */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>Features</h2>
-            <p>Key features include:</p>
-            <ul>
-              <li>Secure user authentication and registration.</li>
-              <li>Easy expense tracking with add, edit, and delete options.</li>
-              <li>Real-time updates via Socket.io.</li>
-              <li>Interactive reporting and analytics.</li>
-              <li>Document uploads for receipts.</li>
-            </ul>
-          </div>
-        </ScrollReveal>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{ padding: '2rem' }}
+    >
+      {/* Hero Section */}
+      <section
+        style={{
+          textAlign: 'center',
+          padding: '4rem 2rem',
+          backgroundColor: '#1e88e5',
+          color: '#fff',
+          borderRadius: '8px',
+          marginBottom: '2rem',
+        }}
+      >
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+          Welcome to Personal Finance Manager
+        </h1>
+        <p style={{ fontSize: '1.2rem' }}>
+          Take control of your finances with real-time tracking, budgeting, and insightful analytics.
+        </p>
+        <div style={{ marginTop: '2rem' }}>
+          <Link
+            to="/register"
+            style={{
+              marginRight: '1rem',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#fff',
+              color: '#1e88e5',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+            }}
+          >
+            Get Started
+          </Link>
+          <Link
+            to="/login"
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: 'transparent',
+              color: '#fff',
+              border: '1px solid #fff',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+            }}
+          >
+            Login
+          </Link>
+        </div>
       </section>
-      
-      {/* Section 3: How It Works */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>How It Works</h2>
-            <p>
-              Built on the MERN stack, our platform integrates a robust Express backend with a dynamic React frontend.
-              Data is securely stored in MongoDB Atlas, and real-time functionality keeps your dashboard up to date.
+
+      {/* Features Section */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ textAlign: 'center' }}>Why Choose Us?</h2>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '2rem',
+            marginTop: '1rem',
+          }}
+        >
+          <div
+            style={{
+              flex: '1 1 250px',
+              maxWidth: '300px',
+              padding: '1rem',
+              borderRadius: '8px',
+              boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+              backgroundColor: '#fff',
+            }}
+          >
+            <h3 style={{ textAlign: 'center' }}>Real-Time Tracking</h3>
+            <p style={{ textAlign: 'center' }}>
+              Instant updates on your transactions with real-time data synchronization.
             </p>
           </div>
-        </ScrollReveal>
-      </section>
-      
-      {/* Section 4: Get Started */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>Get Started Today</h2>
-            <p>
-              Register or log in to start taking control of your finances. Explore our dashboard to view your monthly income,
-              expenses, and detailed reports.
+          <div
+            style={{
+              flex: '1 1 250px',
+              maxWidth: '300px',
+              padding: '1rem',
+              borderRadius: '8px',
+              boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+              backgroundColor: '#fff',
+            }}
+          >
+            <h3 style={{ textAlign: 'center' }}>Easy Budgeting</h3>
+            <p style={{ textAlign: 'center' }}>
+              Set your monthly budget and monitor your spending effortlessly.
             </p>
           </div>
-        </ScrollReveal>
-      </section>
-      
-      {/* Section 5: Testimonials */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>Testimonials</h2>
-            <p>
-              "This app revolutionized the way I manage my expenses. It's intuitive and extremely helpful." – Jane D.
-            </p>
-            <p>
-              "The real-time updates and detailed reports have made a huge difference in my budgeting." – John S.
-            </p>
-          </div>
-        </ScrollReveal>
-      </section>
-      
-      {/* Section 6: Our Vision */}
-      <section style={{ marginBottom: '4rem' }}>
-        <ScrollReveal>
-          <div>
-            <h2>Our Vision</h2>
-            <p>
-              We aim to empower individuals to achieve financial stability and success through continuous improvement of our platform.
+          <div
+            style={{
+              flex: '1 1 250px',
+              maxWidth: '300px',
+              padding: '1rem',
+              borderRadius: '8px',
+              boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+              backgroundColor: '#fff',
+            }}
+          >
+            <h3 style={{ textAlign: 'center' }}>Insightful Analytics</h3>
+            <p style={{ textAlign: 'center' }}>
+              Visualize your income and expenses with interactive charts and graphs.
             </p>
           </div>
-        </ScrollReveal>
+        </div>
       </section>
-    </div>
+
+      {/* Call-to-Action Section */}
+      <section style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <h2>Get Started Today</h2>
+        <p>Sign up now and take control of your financial future!</p>
+        <Link
+          to="/register"
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#1e88e5',
+            color: '#fff',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            marginTop: '1rem',
+            display: 'inline-block',
+          }}
+        >
+          Register Now
+        </Link>
+      </section>
+    </motion.div>
   );
 }
 
