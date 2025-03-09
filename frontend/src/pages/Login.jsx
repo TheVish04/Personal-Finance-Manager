@@ -9,28 +9,19 @@ function Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-
-    if (!passwordRegex.test(password)) {
-      alert('Invalid password format. Please try again.');
-      return;
-    }
-
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password,
       });
+      // Store token in localStorage
       localStorage.setItem('token', response.data.token);
+      // Alternative: Save the user's name in localStorage (assuming the response includes a "user" object)
+      if (response.data.user && response.data.user.name) {
+        localStorage.setItem("userName", response.data.user.name);
+      }
       onLoginSuccess();
       navigate('/dashboard');
     } catch (error) {
@@ -51,7 +42,6 @@ function Login({ onLoginSuccess }) {
           required
           style={{ marginBottom: '1rem', padding: '0.5rem' }}
         />
-
         <label>Password</label>
         <input
           type="password"
@@ -60,7 +50,6 @@ function Login({ onLoginSuccess }) {
           required
           style={{ marginBottom: '1rem', padding: '0.5rem' }}
         />
-
         <button
           type="submit"
           style={{
