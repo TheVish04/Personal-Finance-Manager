@@ -1,4 +1,3 @@
-// frontend/src/pages/AddMoney.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +6,7 @@ function AddMoney() {
   const [amount, setAmount] = useState('');
   const [source, setSource] = useState('');
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ function AddMoney() {
       const now = new Date().toISOString();
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/expenses`,
+        `${API_URL}/api/expenses`,
         {
           amount,
           title: source,
@@ -32,8 +32,6 @@ function AddMoney() {
         }
       );
       console.log('AddMoney response:', response.data);
-
-      // If successful, navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Error adding money:', error);
@@ -51,6 +49,7 @@ function AddMoney() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
+          style={{ marginBottom: '1rem', padding: '0.5rem' }}
         />
         <label>Source/Description</label>
         <input
@@ -58,8 +57,21 @@ function AddMoney() {
           value={source}
           onChange={(e) => setSource(e.target.value)}
           required
+          style={{ marginBottom: '1rem', padding: '0.5rem' }}
         />
-        <button type="submit" style={{ marginTop: '1rem' }}>Add Money</button>
+        <button
+          type="submit"
+          style={{
+            padding: '0.75rem',
+            background: '#333',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+            borderRadius: '4px',
+          }}
+        >
+          Add Money
+        </button>
       </form>
     </div>
   );
