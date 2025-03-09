@@ -383,9 +383,49 @@ function Dashboard() {
       </div>
 
       {/* Navigation Buttons */}
-      <div style={{ marginTop: "2rem" }}>
-        <a href="/add-money" style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}>Add Money</a>
-        <a href="/add-expense" style={{ marginRight: "1rem", textDecoration: "none", color: "#333" }}>Add Expense</a>
+      
+      <div style={{
+  position: "absolute",
+  top: "1.5rem",
+  right: "2rem",
+  backgroundColor: "#f8f9fa",
+  padding: "0.8rem 1.5rem",
+  borderRadius: "8px",
+  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
+  display: "flex",
+  alignItems: "center",
+  gap: "1rem"
+}}>
+  <a 
+    href="/add-money" 
+    style={{
+      padding: "8px 15px",
+      backgroundColor: "#28a745",
+      color: "#fff",
+      borderRadius: "5px",
+      textDecoration: "none",
+      fontWeight: "bold"
+    }}
+  >
+    Add Money
+  </a>
+  <a 
+    href="/add-expense" 
+    style={{
+      padding: "8px 15px",
+      backgroundColor: "#dc3545",
+      color: "#fff",
+      borderRadius: "5px",
+      textDecoration: "none",
+      fontWeight: "bold"
+    }}
+  >
+    Add Expense
+  </a>
+</div>
+
+        
+        <div style={{ marginTop: "2rem" }}>
         <a href="/budget" style={{ textDecoration: "none", color: "#333" }}>Budget Settings</a>
       </div>
 
