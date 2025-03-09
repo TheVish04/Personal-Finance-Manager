@@ -249,18 +249,74 @@ function Dashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ padding: "2rem" }}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.5 }}
+    style={{ padding: "2rem" }}
+  >
+    {/* Row container for heading + buttons */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "1rem",
+      }}
     >
-      <h1>Dashboard</h1>
-      <div style={{ marginBottom: "2rem" }}>
-        <p>Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span></p>
-        <p>Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span></p>
-        <p>Remaining Balance: <strong>₹{remainingBalance}</strong></p>
+      <h1 style={{ margin: 0 }}>Dashboard</h1>
+
+      {/* Button Box */}
+      <div
+        style={{
+          backgroundColor: "#f8f9fa",
+          padding: "0.5rem 1rem",
+          borderRadius: "8px",
+          boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <a
+          href="/add-money"
+          style={{
+            padding: "8px 15px",
+            backgroundColor: "#28a745",
+            color: "#fff",
+            borderRadius: "5px",
+            textDecoration: "none",
+            fontWeight: "bold",
+          }}
+        >
+          Add Money
+        </a>
+        <a
+          href="/add-expense"
+          style={{
+            padding: "8px 15px",
+            backgroundColor: "#dc3545",
+            color: "#fff",
+            borderRadius: "5px",
+            textDecoration: "none",
+            fontWeight: "bold",
+          }}
+        >
+          Add Expense
+        </a>
       </div>
+    </div>
+
+    <div style={{ marginBottom: "2rem" }}>
+      <p>
+        Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span>
+      </p>
+      <p>
+        Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span>
+      </p>
+      <p>
+        Remaining Balance: <strong>₹{remainingBalance}</strong>
+      </p>
+    </div>
 
       {/* Expense & Income Graph */}
       <div style={{ marginBottom: "2rem" }}>
@@ -381,51 +437,8 @@ function Dashboard() {
           </tbody>
         </table>
       </div>
-
-      {/* Navigation Buttons */}
-      
-      <div style={{
-  position: "absolute",
-  top: "1.5rem",
-  right: "2rem",
-  backgroundColor: "#f8f9fa",
-  padding: "0.8rem 1.5rem",
-  borderRadius: "8px",
-  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
-  display: "flex",
-  alignItems: "center",
-  gap: "1rem"
-}}>
-  <a 
-    href="/add-money" 
-    style={{
-      padding: "8px 15px",
-      backgroundColor: "#28a745",
-      color: "#fff",
-      borderRadius: "5px",
-      textDecoration: "none",
-      fontWeight: "bold"
-    }}
-  >
-    Add Money
-  </a>
-  <a 
-    href="/add-expense" 
-    style={{
-      padding: "8px 15px",
-      backgroundColor: "#dc3545",
-      color: "#fff",
-      borderRadius: "5px",
-      textDecoration: "none",
-      fontWeight: "bold"
-    }}
-  >
-    Add Expense
-  </a>
-</div>
-
-        
-        <div style={{ marginTop: "2rem" }}>
+  
+      <div style={{ marginTop: "2rem" }}>
         <a href="/budget" style={{ textDecoration: "none", color: "#333" }}>Budget Settings</a>
       </div>
 
