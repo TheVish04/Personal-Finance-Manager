@@ -4,9 +4,17 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Register({ onRegisterSuccess }) {
+  // Existing states
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // NEW: Confirm password and toggles for show/hide
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Existing code
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -16,6 +24,13 @@ function Register({ onRegisterSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if passwords match (NEW)
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    // Existing checks
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
       return;
@@ -43,6 +58,8 @@ function Register({ onRegisterSuccess }) {
   return (
     <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
       <h2>Register</h2>
+
+      {/* Existing form code */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>Name</label>
         <input
@@ -63,14 +80,58 @@ function Register({ onRegisterSuccess }) {
         />
 
         <label>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ marginBottom: '1rem', padding: '0.5rem' }}
-        />
+        {/* Wrap password input in a relative container for the toggle button */}
+        <div style={{ position: 'relative', marginBottom: '1rem' }}>
+          <input
+            type={showPassword ? 'text' : 'password'}  // Show/hide
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ padding: '0.5rem', width: '100%' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: '0.5rem',
+              top: '0.5rem',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
 
+        {/* NEW: Confirm Password field */}
+        <label>Confirm Password</label>
+        <div style={{ position: 'relative', marginBottom: '1rem' }}>
+          <input
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            style={{ padding: '0.5rem', width: '100%' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            style={{
+              position: 'absolute',
+              right: '0.5rem',
+              top: '0.5rem',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {showConfirmPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
+
+        {/* Existing Register button */}
         <button
           type="submit"
           style={{
