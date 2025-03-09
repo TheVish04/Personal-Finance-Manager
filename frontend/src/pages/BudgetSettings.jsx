@@ -10,7 +10,7 @@ function BudgetSettings() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios
-      .get('process.env.REACT_APP_API_URL/api/user/budget', {
+      .get(`${process.env.REACT_APP_API_URL}/api/user/budget`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -24,7 +24,7 @@ function BudgetSettings() {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        'process.env.REACT_APP_API_URL/api/user/budget',
+        `${process.env.REACT_APP_API_URL}/api/user/budget`,
         { monthlyBudget: budget },
         { headers: { Authorization: `Bearer ${token}` } }
       );
