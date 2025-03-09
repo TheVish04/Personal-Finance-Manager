@@ -14,11 +14,12 @@ function Dashboard() {
   const [chartData, setChartData] = useState([]);
   const [editExpense, setEditExpense] = useState(null);
   const socketRef = useRef();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchTransactions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/expenses`, {
+      const res = await axios.get(`${API_URL}/api/expenses`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { timestamp: new Date().getTime() },
       });
@@ -36,7 +37,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    socketRef.current = io(`${process.env.REACT_APP_API_URL}`);
+    socketRef.current = io(`${API_URL}`);
     const socket = socketRef.current;
 
     socket.on("expenseCreated", (newTransaction) => {
@@ -67,6 +68,7 @@ function Dashboard() {
     };
   }, []);
 
+  // Group transactions by hour for Expense & Income Graph
   const processChartData = (transactions) => {
     const grouped = {};
     transactions.forEach(({ transactionType, amount, date }) => {
@@ -89,6 +91,7 @@ function Dashboard() {
     return Object.values(grouped).sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
+  // Helper: Process transactions by title for pie charts
   const processPieDataByTitle = (txs) => {
     const dataMap = {};
     txs.forEach(({ title, amount }) => {
@@ -180,7 +183,7 @@ function Dashboard() {
     if (!window.confirm("Are you sure you want to delete this expense?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/expenses/${id}`, {
+      await axios.delete(`${API_URL}/api/expenses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const updated = transactions.filter((tx) => tx._id !== id);
@@ -200,7 +203,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/expenses/${editExpense._id}`,
+        `${API_URL}/api/expenses/${editExpense._id}`,
         editExpense,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -217,6 +220,23 @@ function Dashboard() {
       alert("Failed to update expense.");
     }
   };
+
+  // Function to group transactions by month-year
+  const groupTransactionsByMonth = (transactions) => {
+    return transactions.reduce((acc, txn) => {
+      const d = new Date(txn.date);
+      const monthYear = `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+      if (!acc[monthYear]) {
+        acc[monthYear] = [];
+      }
+      acc[monthYear].push(txn);
+      return acc;
+    }, {});
+  };
+
+  const monthlyTransactions = groupTransactionsByMonth(transactions);
 
   // CSV Export Functionality
   const exportToCSV = () => {
@@ -249,74 +269,66 @@ function Dashboard() {
 
   return (
     <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.5 }}
-    style={{ padding: "2rem" }}
-  >
-    {/* Row container for heading + buttons */}
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{ padding: "2rem", position: "relative" }}
     >
-      <h1 style={{ margin: 0 }}>Dashboard</h1>
-
-      {/* Button Box */}
-      <div
-        style={{
-          backgroundColor: "#f8f9fa",
-          padding: "0.5rem 1rem",
-          borderRadius: "8px",
-          boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
-        <a
-          href="/add-money"
+      {/* Header Row with Dashboard Title and Buttons */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <h1 style={{ margin: 0 }}>Dashboard</h1>
+        <div
           style={{
-            padding: "8px 15px",
-            backgroundColor: "#28a745",
-            color: "#fff",
-            borderRadius: "5px",
-            textDecoration: "none",
-            fontWeight: "bold",
+            backgroundColor: "#f8f9fa",
+            padding: "0.5rem 1rem",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
           }}
         >
-          Add Money
-        </a>
-        <a
-          href="/add-expense"
-          style={{
-            padding: "8px 15px",
-            backgroundColor: "#dc3545",
-            color: "#fff",
-            borderRadius: "5px",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-        >
-          Add Expense
-        </a>
+          <a
+            href="/add-money"
+            style={{
+              padding: "8px 15px",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              borderRadius: "5px",
+              textDecoration: "none",
+              fontWeight: "bold",
+            }}
+          >
+            Add Money
+          </a>
+          <a
+            href="/add-expense"
+            style={{
+              padding: "8px 15px",
+              backgroundColor: "#dc3545",
+              color: "#fff",
+              borderRadius: "5px",
+              textDecoration: "none",
+              fontWeight: "bold",
+            }}
+          >
+            Add Expense
+          </a>
+        </div>
       </div>
-    </div>
 
-    <div style={{ marginBottom: "2rem" }}>
-      <p>
-        Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span>
-      </p>
-      <p>
-        Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span>
-      </p>
-      <p>
-        Remaining Balance: <strong>₹{remainingBalance}</strong>
-      </p>
-    </div>
+      <div style={{ marginBottom: "2rem", marginTop: "1rem" }}>
+        <p>
+          Total Credit: <span style={{ color: "green" }}>₹{totalCredit}</span>
+        </p>
+        <p>
+          Total Debit: <span style={{ color: "red" }}>₹{totalDebit}</span>
+        </p>
+        <p>
+          Remaining Balance: <strong>₹{remainingBalance}</strong>
+        </p>
+      </div>
 
       {/* Expense & Income Graph */}
       <div style={{ marginBottom: "2rem" }}>
@@ -329,22 +341,9 @@ function Dashboard() {
       </div>
 
       {/* Two Pie Charts: Income and Expense Breakdown by Title */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginBottom: "2rem",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-around", marginBottom: "2rem" }}>
         {/* Income Pie Chart */}
-        <div
-          style={{
-            width: "450px",
-            height: "400px",
-            border: "1px solid #ccc",
-            padding: "1rem",
-          }}
-        >
+        <div style={{ width: "450px", height: "400px", border: "1px solid #ccc", padding: "1rem" }}>
           <h3>Income Breakdown (by Source)</h3>
           {creditTransactions.length > 0 ? (
             <div style={{ width: "100%", height: "100%" }}>
@@ -356,14 +355,7 @@ function Dashboard() {
         </div>
 
         {/* Expense Pie Chart */}
-        <div
-          style={{
-            width: "450px",
-            height: "400px",
-            border: "1px solid #ccc",
-            padding: "1rem",
-          }}
-        >
+        <div style={{ width: "450px", height: "400px", border: "1px solid #ccc", padding: "1rem" }}>
           <h3>Expense Breakdown (by Title)</h3>
           {debitTransactions.length > 0 ? (
             <div style={{ width: "100%", height: "100%" }}>
@@ -380,7 +372,7 @@ function Dashboard() {
         <button onClick={exportToCSV}>Export CSV</button>
       </div>
 
-      {/* Transactions Table */}
+      {/* Existing Transactions Table */}
       <div>
         <h3>Transaction Report</h3>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -401,28 +393,15 @@ function Dashboard() {
                 <tr
                   key={tx._id}
                   style={{
-                    backgroundColor:
-                      tx.transactionType === "debit" ? "#ffe6e6" : "#e6ffe6",
+                    backgroundColor: tx.transactionType === "debit" ? "#ffe6e6" : "#e6ffe6",
                   }}
                 >
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {tx.transactionType}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {tx.title || "-"}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {tx.amount}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {tx.category || "-"}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {new Date(tx.date).toLocaleString()}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {tx.updatedAt ? new Date(tx.updatedAt).toLocaleString() : "N/A"}
-                  </td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{tx.transactionType}</td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{tx.title || "-"}</td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{tx.amount}</td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{tx.category || "-"}</td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{new Date(tx.date).toLocaleString()}</td>
+                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>{tx.updatedAt ? new Date(tx.updatedAt).toLocaleString() : "N/A"}</td>
                   <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                     <button onClick={() => setEditExpense(tx)}>Edit</button>
                     <button onClick={() => handleDelete(tx._id)}>Delete</button>
@@ -437,9 +416,59 @@ function Dashboard() {
           </tbody>
         </table>
       </div>
-  
+
+      {/* Monthly Transaction Report */}
+      <div style={{ marginTop: "3rem" }}>
+        <h3>Monthly Transaction Report</h3>
+        {Object.keys(monthlyTransactions).length > 0 ? (
+          Object.keys(monthlyTransactions)
+            .sort()
+            .reverse()
+            .map((monthYear) => (
+              <div key={monthYear} style={{ marginBottom: "2rem" }}>
+                <h4>
+                  {new Date(`${monthYear}-01`).toLocaleString("default", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </h4>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr>
+                      <th style={{ border: "1px solid #ccc", padding: "8px" }}>Type</th>
+                      <th style={{ border: "1px solid #ccc", padding: "8px" }}>Title</th>
+                      <th style={{ border: "1px solid #ccc", padding: "8px" }}>Amount</th>
+                      <th style={{ border: "1px solid #ccc", padding: "8px" }}>Category</th>
+                      <th style={{ border: "1px solid #ccc", padding: "8px" }}>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthlyTransactions[monthYear].map((txn) => (
+                      <tr key={txn._id} style={{ backgroundColor: txn.transactionType === "debit" ? "#ffe6e6" : "#e6ffe6" }}>
+                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>{txn.transactionType}</td>
+                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>{txn.title || "-"}</td>
+                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>{txn.amount}</td>
+                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>{txn.category || "-"}</td>
+                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>{new Date(txn.date).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))
+        ) : (
+          <p>No monthly transactions available.</p>
+        )}
+      </div>
+
+      {/* Navigation Buttons */}
       <div style={{ marginTop: "2rem" }}>
-        <a href="/budget" style={{ textDecoration: "none", color: "#333" }}>Budget Settings</a>
+        <a
+          href="/budget"
+          style={{ textDecoration: "none", color: "#333" }}
+        >
+          Budget Settings
+        </a>
       </div>
 
       <div style={{ marginTop: "1rem" }}>
@@ -475,13 +504,13 @@ function Dashboard() {
             <input
               type="text"
               value={editExpense.title}
-              onChange={(e) => setEditExpense({ ...editExpense, title: e.target.value })} 
+              onChange={(e) => setEditExpense({ ...editExpense, title: e.target.value })}
             />
             <label>Amount</label>
             <input
               type="number"
               value={editExpense.amount}
-              onChange={(e) => setEditExpense({ ...editExpense, amount: e.target.value })} 
+              onChange={(e) => setEditExpense({ ...editExpense, amount: e.target.value })}
             />
             <div style={{ marginTop: "1rem" }}>
               <button onClick={handleUpdate}>Save</button>
