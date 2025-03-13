@@ -10,5 +10,3 @@ logs/
 
 # Dependency directories
 jspm_packages/
-
-.env
